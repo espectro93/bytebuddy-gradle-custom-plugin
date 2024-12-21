@@ -1,0 +1,49 @@
+buildscript {
+    dependencies {
+        classpath "com.espectro93:counter-plugin"
+    }
+}
+
+plugins {
+    id 'java'
+    id 'net.bytebuddy.byte-buddy-gradle-plugin' version "1.15.10"
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+group = 'com.espectro93'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "com.espectro93:counter-plugin"
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'com.espectro93.Main'
+        )
+    }
+}
+
+shadowJar {
+    mergeServiceFiles()
+    manifest {
+        attributes 'Main-Class': 'com.espectro93.Main'
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+byteBuddy {
+    transformation {
+        pluginName = 'com.espectro93.CounterWeavingPlugin'
+    }
+}
